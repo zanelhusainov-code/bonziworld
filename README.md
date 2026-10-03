@@ -1,42 +1,28 @@
-# BonziWORLD
-This project is a fork of BonziWORLD II. I had to make this.
-All the source code for the server and client is publically available here. If you want to run BonziWORLD 2, by all means go ahead.
-Do whatever you'd like with this code.
-Just try to put me somewhere in the credits.
+cd server then npm install then node index (on Windows, serverstart.bat also supports /restart).
 
-If you want to join Seamus's most popular server, visit https://bonziworld.co.
+Tests
+-----
 
-## Dependencies
-- Node.js and npm
-- Ruby
-- Sass
-- Git
-- Cordova (Optional)
+From the repository root, run `pnpm test`. The connection browser test starts
+an isolated BonziWORLD server, drives the real client in headless Chromium, and
+checks initial Socket.IO connection, outage messaging, and login recovery.
 
-## Setup
-In a terminal/command prompt, navigate to where you'd like BonziWORLD 2 to be placed and run the following:
-```
-git clone https://github.com/ItzUltraChace/BonziWORLD
-cd BonziWORLD
-```
+Configuration
+-------------
 
-### Client
-```
-cd src
-npm install
-cd ..
-```
+Copy server/.env.example to server/.env, or provide the same values through
+your deployment's secret manager. Direct runlevel-7 godword authentication is
+disabled; normal Owners can only be granted by a Big Owner. The runlevel-8
+credential is provided through `BIG_OWNER_GODWORD`.
 
-### Server
-```
-cd server
-npm install
-node index.js
-```
-After this, BonziWORLD 2 will be accessible on port 3000. (http://localhost:3000/)
+Autoscaled replicas coordinate permanent-promotion outage alerts through
+private App Storage using `DEFAULT_OBJECT_STORAGE_BUCKET_ID`. This setting is
+required for server startup in deployment; do not replace it with replica-local
+storage, or each replica can emit its own alert. The shared object contains only
+the aggregate alert and expiry timestamps.
 
-## Disclaimer
-I'm not responsible if you screw up anything with your computer while setting this up. I have no idea how you would, but someone will find a way. I also will not provide support for installing dependencies. If you have everything installed properly, the above commands will work.
-
-## License
-MIT
+IP privacy is enabled by default. Admin-facing IP values are stable,
+pseudonymous identifiers derived from the existing `SESSION_SECRET` with a
+separate domain-specific hash. The server still uses the real socket address
+internally for bans, rate limits, proxy checks, and ASN lookups; this avoids
+turning privacy masking into an abuse-control bypass.
